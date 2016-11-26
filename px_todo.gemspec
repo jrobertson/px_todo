@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'px_todo'
-  s.version = '0.1.0'
-  s.summary = 'px_todo'
+  s.version = '0.1.1'
+  s.summary = 'Reads a plain text file containing a to-do list which is the stored in a Polyrex (XML) document format.'
   s.authors = ['James Robertson']
   s.files = Dir['lib/px_todo.rb']
   s.add_runtime_dependency('pxrowx', '~> 0.1', '>=0.1.1')

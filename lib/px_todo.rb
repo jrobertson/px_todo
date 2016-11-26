@@ -9,9 +9,12 @@ require 'pxrowx'
 
 class PxTodo
 
-  def initialize(raw_s)
+  def initialize(raw_s, filepath: '.')
     
-    s, _ = RXFHelper.read(raw_s)
+    s, type = RXFHelper.read(raw_s)
+    
+    @filepath = filepath
+    @filepath = File.dirname(raw_s) if type == :file and filepath == '.'
 
     # remove the file heading     
     lines = s.lines
