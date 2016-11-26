@@ -11,11 +11,25 @@ class PxTodo
 
   def initialize(raw_s, filepath: '.')
     
+    Dir.chdir  filepath
     s, type = RXFHelper.read(raw_s)
     
     @filepath = filepath
     @filepath = File.dirname(raw_s) if type == :file and filepath == '.'
+    
+    s =~ /<?xml/ ? load_px(s) : import_txt(s)  
 
+  end
+  
+
+  def to_px
+    @px
+  end
+  
+  private
+  
+  def import_txt()
+    
     # remove the file heading     
     lines = s.lines
     lines.shift 3
@@ -68,14 +82,11 @@ class PxTodo
         
       end
       
-    end        
-
+    end  
+    
   end
   
-
-  def to_px
-    @px
+  def load_px(s)
+    @px = Polyrex.new s
   end
-  
-  
 end
