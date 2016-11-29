@@ -9,7 +9,7 @@ require 'pxrowx'
 
 class PxTodo
 
-  def initialize(raw_s, filepath: '.')
+  def initialize(raw_s, filepath: '.', ignore_headings: false, &blk)
     
     Dir.chdir  filepath
     s, type = RXFHelper.read(raw_s)
@@ -17,7 +17,11 @@ class PxTodo
     @filepath = filepath
     @filepath = File.dirname(raw_s) if type == :file and filepath == '.'
     
-    s =~ /<?xml/ ? load_px(s) : import_txt(s)  
+    @fields = %w( title heading when duration priority status note tags)    
+    
+    s.gsub!(/^#.*/,'') if ignore_headings
+    
+    s =~ /<?xml/ ? load_px(s) : import_txt(s, &blk)  
 
   end
   
@@ -28,13 +32,12 @@ class PxTodo
   
   private
   
-  def import_txt()
+  def import_txt(s, &blk)
     
     # remove the file heading     
     lines = s.lines
     lines.shift 3
     
-    @fields = %w( title heading when duration priority status note tags)
     declar = "<?ph schema='items[title]/todo[#{@fields.join(',')}]'" + 
         " format_masks[0]='[!title]'?>"
 
@@ -46,7 +49,7 @@ class PxTodo
     
     @px.each_recursive do |x, parent, level|
 
-      yield x if block_given?
+      blk.call x if block_given?
 
       todo = x.title
       raw_status = todo.slice!(/\[.*\]\s+/)
